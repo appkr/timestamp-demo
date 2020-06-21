@@ -13,7 +13,30 @@ services:
       - MYSQL_ROOT_PASSWORD=secret
     ports:
       - 3306:3306
-    command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8mb4 --explicit_defaults_for_timestamp
+    command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8mb4 --explicit_defaults_for_timestamp --general_log=1 --general_log_file=/var/log/mysql/general.log
     healthcheck:
       test: ["CMD", "mysql", "-uroot", "-psecret", "-e", "SELECT 1"]
 
+  laravel:
+    image: bitnami/php-fpm:7.4-prod
+    container_name: laravel
+    volumes:
+      - ./laravel:/app
+    environment:
+      - DB_HOST=mysql
+      - DB_DATABASE=timestamp_demo
+      - DB_USERNAME=homestead
+      - DB_PASSWORD=secret
+      - APP_TIMEZONE="Asia/Seoul"
+    depends_on:
+      - mysql
+
+  nginx:
+    image: bitnami/nginx:latest
+    container_name: nginx
+    ports:
+     - 8080:8080
+    volumes:
+      - ./resources/nginx.conf:/opt/bitnami/nginx/conf/server_blocks/laravel.conf
+    depends_on:
+      - laravel
