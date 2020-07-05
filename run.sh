@@ -32,6 +32,9 @@ ensure_dependency gsed # brew install gnu-sed
 cd laravel; CWD=$(pwd)
 echo -e "${YELLOW}Current working directory is ${CWD}${NC}"
 echo -e "--------------------------------------------------------------------------------"
+echo -e "Building laravel application"
+echo -e "--------------------------------------------------------------------------------"
+echo ""
 
 set -x
 
@@ -47,9 +50,23 @@ php ./artisan key:generate
 
 set +x
 
+cd ../spring; CWD=$(pwd)
+echo -e "${YELLOW}Current working directory is ${CWD}${NC}"
+echo -e "--------------------------------------------------------------------------------"
+echo -e "Building spring application"
+echo -e "--------------------------------------------------------------------------------"
+echo ""
+
+set -x
+
+./gradlew clean jibDockerBuild
+
+set +x
+
 cd ..; CWD=$(pwd)
 echo -e "${YELLOW}Current working directory is ${CWD}${NC}"
 echo -e "--------------------------------------------------------------------------------"
+echo ""
 
 set -x
 
@@ -57,4 +74,4 @@ docker-compose up
 
 set +x
 
-# docker-compse down
+docker-compose down
